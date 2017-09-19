@@ -89,7 +89,7 @@ namespace MonkHeal
             //{
             if (targetmanager.Target != null)
             {
-                Log.Debug(targetmanager.Target.HealthPercentage.ToString());
+                Log.Debug(targetmanager.lowhealthfriendCOunt.ToString());
             }
             //}
 
@@ -224,11 +224,20 @@ namespace MonkHeal
                 CancelChannel = false,
             };
 
+            WowAbility Wildgrowth = new WowAbility(Restoration.WildGrowth, 0, () => (Game.Instance.IsInGame && targetmanager.WildGrouth_use_check),
+                () => Restoration.WildGrowth.IsUsable, targetmanager.Gettarget)
+            {
+                FacingRequired = false,
+                IsTerrainClick = false,
+                CancelCast = false,
+                CancelChannel = false,
+            };
+
             //BattlePreparing Spell list
             targetmanager.BattlePreparing.Add(Rejuvenation);
 
             //LeveL1_Healing Spell list
-            
+            targetmanager.LeveL1_Healting.Add(Wildgrowth);
             targetmanager.LeveL1_Healting.Add(Lifebloom);
             targetmanager.LeveL1_Healting.Add(Rejuvenation);
             targetmanager.LeveL1_Healting.Add(HealingTouch);

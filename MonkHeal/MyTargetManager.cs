@@ -39,6 +39,7 @@ namespace MonkHeal
         public WowPlayer lowestHealthFriend;
         public WowPlayer Target;
         public WowUnit MycurrentTarget;
+        public int lowhealthfriendCOunt;
 
         
         public List<IAbility> BattlePreparing=new List<IAbility>();
@@ -50,6 +51,7 @@ namespace MonkHeal
         public bool HealingTouchCheck = true;
         public bool CanUse_Lifebloom = true;
         public bool Regrowth_use_check = true;
+        public bool WildGrouth_use_check = true;
 
         public int RejuventurationCount = 0;
         //目标排序方法（按照血量）
@@ -102,6 +104,8 @@ namespace MonkHeal
             friendsAndme.Sort(CompareByHeathPercentage);
             //血量最低队友
             lowestHealthFriend = friendsAndme.First();
+            //更新血量低于70%的队友数量
+            lowhealthfriendCOunt = friendsAndme.Where(x => x.HealthPercentage < 70).Count();
             enemies = players.Where(x => x.IsHostile).ToList();
             MycurrentTarget = null;
             MycurrentTarget = Game.Instance.Player.GetTargetUnit();
@@ -117,6 +121,7 @@ namespace MonkHeal
             RejuventurationCheck = true;
             HealingTouchCheck = true;
             Regrowth_use_check = UpdateRegrowthhealth();
+            WildGrouth_use_check = UpdateWildGrowthCheck();
             Target = null;
         }
 
@@ -134,6 +139,17 @@ namespace MonkHeal
             else
             {
                 return !target.HasAura(774) || !target.HasAura(155777);
+            }
+        }
+        public bool UpdateWildGrowthCheck()
+        {
+            if (lowhealthfriendCOunt >= 3)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
             }
         }
 
