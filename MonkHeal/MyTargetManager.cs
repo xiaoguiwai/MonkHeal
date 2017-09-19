@@ -24,6 +24,7 @@ namespace MonkHeal
         public int health_lifebloomCheck= 100;
         public int Regrowth_healthcheck = 90;
         public int HealingTouch_HeallthCheck = 70;
+        public int SwiftmendHealtheCheck = 40;
         
 
 
@@ -52,6 +53,7 @@ namespace MonkHeal
         public bool CanUse_Lifebloom = true;
         public bool Regrowth_use_check = true;
         public bool WildGrouth_use_check = true;
+        public bool SwiftMent_use_check = true;
 
         public int RejuventurationCount = 0;
         //目标排序方法（按照血量）
@@ -144,6 +146,17 @@ namespace MonkHeal
         public bool UpdateWildGrowthCheck()
         {
             if (lowhealthfriendCOunt >= 3)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+        public bool UpdateSwiftMend(WowUnit target)
+        {
+            if (target.HealthPercentage < SwiftmendHealtheCheck)
             {
                 return true;
             }
@@ -263,7 +276,11 @@ namespace MonkHeal
         public WowUnit Gettarget()
         {
             //对目标进行回春术释放修正
-            RejuventurationCheck= RejuvenationCheck_checkthetarget(Target);
+            if (Target != null)
+            {
+                RejuventurationCheck = RejuvenationCheck_checkthetarget(Target);
+                SwiftMent_use_check = UpdateSwiftMend(Target);
+            }
             
             return Target;
         }
