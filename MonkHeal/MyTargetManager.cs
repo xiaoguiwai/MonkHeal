@@ -25,6 +25,8 @@ namespace MonkHeal
         public int Regrowth_healthcheck = 90;
         public int HealingTouch_HeallthCheck = 70;
         public int SwiftmendHealtheCheck = 40;
+        public int BarkskinHealthCheck = 50;
+        public int IronbarkHealthCheck = 40;
         
 
 
@@ -42,10 +44,11 @@ namespace MonkHeal
         public WowUnit MycurrentTarget;
         public int lowhealthfriendCOunt;
 
-        
+        public List<IAbility> Empty = new List<IAbility>();
         public List<IAbility> BattlePreparing=new List<IAbility>();
         public List<IAbility> LeveL1_Healting = new List<IAbility>();
         public List<IAbility> HearTheLowestTarget = new List<IAbility>();
+        public List<IAbility> Control_and_Protect = new List<IAbility>();
 
         public bool CancelChannel = true;
         public bool Rejuvenation_use_check = true;
@@ -54,6 +57,8 @@ namespace MonkHeal
         public bool Regrowth_use_check = true;
         public bool WildGrouth_use_check = true;
         public bool SwiftMent_use_check = true;
+        public bool BarkSkin_use_check = true;
+        public bool IronBark_use_check = true;
 
         public int RejuventurationCount = 0;
         //目标排序方法（按照血量）
@@ -87,13 +92,25 @@ namespace MonkHeal
             
         }
 
+        public void PVE_Checks_Update()
+        {
+            Lifebloom_use_check = UpdateCanuse_Lifebloom();
+            Rejuvenation_use_check = true;
+            Healingtouch_use_check = true;
+            Regrowth_use_check = UpdateRegrowthhealth();
+            WildGrouth_use_check = UpdateWildGrowthCheck();
+            BarkSkin_use_check = true;
+            IronBark_use_check = true;
+        }
 
         //获得用于战斗逻辑的各项战斗条件
         public void UpdateEnvironment()
         {
-             
 
-        //各类单位集合更新数据 
+            Target = null;
+            MycurrentTarget = null;
+
+            //各类单位集合更新数据 
             Me = Game.Instance.Player;
             players = Game.Instance.Manager.Objects.OfType<WowPlayer>().Where(x=>x.Distance<40&&x.InLoS).ToList();
             foreach(var player in players)
@@ -109,22 +126,14 @@ namespace MonkHeal
             //更新血量低于70%的队友数量
             lowhealthfriendCOunt = friendsAndme.Where(x => x.HealthPercentage < 70).Count();
             enemies = players.Where(x => x.IsHostile).ToList();
-            MycurrentTarget = null;
-            MycurrentTarget = Game.Instance.Player.GetTargetUnit();
-
-            //丰饶层数更新
             MycurrentTarget = Me.GetTargetUnit();
-            
+            MycurrentTarget.Update();//必须刷新，之前没刷新过
             RejuventurationCount = Me.GetAura(207640).StackCount;
-            
+
 
             //更新生命绽放使用条件
-            Lifebloom_use_check = UpdateCanuse_Lifebloom();
-            Rejuvenation_use_check = true;
-            Healingtouch_use_check = true;
-            Regrowth_use_check = UpdateRegrowthhealth();
-            WildGrouth_use_check = UpdateWildGrowthCheck();
-            Target = null;
+            PVE_Checks_Update();
+            
         }
 
 
@@ -165,7 +174,6 @@ namespace MonkHeal
                 return false;
             }
         }
-
         public bool UpdateCanuse_Lifebloom()
         {
             foreach(var player in friendsAndme)
@@ -192,6 +200,30 @@ namespace MonkHeal
                 Regrowth_healthcheck = 70;
                 return true;
             }
+        }
+        public bool UpdateBarkskinCheck(WowUnit target)
+        {
+            if (target == Me&&target.HealthPercentage<BarkskinHealthCheck)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+            
+        }
+        public bool UpdateIronBarkCheck(WowUnit target)
+        {
+            if (target.HealthPercentage < IronbarkHealthCheck)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+           
         }
         
         
@@ -226,6 +258,11 @@ namespace MonkHeal
 
 
             Target = friendsAndme.FirstOrDefault(x => x.HealthPercentage < 95 && (RejuvenationCheck_checkthetarget(x) == true || Lifebloom_use_check == true || x.HealthPercentage<Regrowth_healthcheck));
+
+            
+
+
+
             if (Target != null)
             {
                 if (Target.HealthPercentage < Regrowth_healthcheck)
@@ -246,6 +283,28 @@ namespace MonkHeal
             {
                 return Solution_BattlePreparing();
             }
+        }
+
+        public List<IAbility> Protection_and_Control()
+        {
+            if (Me.HealthPercentage < BarkskinHealthCheck&&UpdateBarkskinCheck(Me))
+            {
+                Target = Me;
+                return Control_and_Protect;
+            }
+            else if(UpdateBarkskinCheck(lowestHealthFriend))
+            {
+                Target = lowestHealthFriend;
+                return Control_and_Protect;
+
+            }
+            else
+            {
+                return Empty; 
+            }
+            
+
+                
         }
 
 
@@ -280,8 +339,12 @@ namespace MonkHeal
             {
                 Rejuvenation_use_check = RejuvenationCheck_checkthetarget(Target);
                 SwiftMent_use_check = UpdateSwiftMend(Target);
+                BarkSkin_use_check = UpdateBarkskinCheck(Target);
             }
+           
             
+
+
             return Target;
         }
     }

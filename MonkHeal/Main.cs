@@ -31,9 +31,7 @@ namespace MonkHeal
             Game.Instance.Disposing +=
                     (sender, args) => FileLogger.Instance.WriteLine("shutting down routine: " + MetaData.Name);
 
-            // this determines how often your routine is checked  if it needs to tick or not.  
-            // in this case CombatNeeded would only be checked at most every 5 seconds -- 
-            // and subsequently your CombatAsync() called.
+            
             Interval = 300.Milliseconds();
         }
 
@@ -76,27 +74,18 @@ namespace MonkHeal
         public override async Task<bool> CombatAsync()
         {
 
+
+
+           targetmanager.UpdateEnvironment();
+
+
+           UseAbilities(targetmanager.Protection_and_Control());
+           UseAbilities(targetmanager.Solution_BattlePreparing_withpeoplehirt());
             
 
-            targetmanager.UpdateEnvironment();
 
             
-            var a=targetmanager.Solution_BattlePreparing_withpeoplehirt();
-
-            //if (targetmanager.Target == null)
-            //{ Log.Debug("no target"); }
-            //else
-            //{
-            if (targetmanager.Target != null)
-            {
-                Log.Debug(targetmanager.lowhealthfriendCOunt.ToString());
-            }
-            //}
-
-            if (targetmanager.Target == null)
-            { return true; }
-
-            UseAbilities(a);
+            //UseAbilities(targetmanager.Solution_BattlePreparing_withpeoplehirt());
             return true;
 
             
@@ -242,16 +231,40 @@ namespace MonkHeal
                 CancelChannel = false,
             };
 
+
+            WowAbility Barkskin = new WowAbility(Restoration.Barkskin, 0, () => (Game.Instance.IsInGame && targetmanager.BarkSkin_use_check),
+               () => Restoration.Barkskin.IsUsable, targetmanager.Gettarget)
+            {
+                FacingRequired = false,
+                IsTerrainClick = false,
+                CancelCast = false,
+                CancelChannel = false,
+            };
+
+            WowAbility IronBark = new WowAbility(Restoration.Ironbark, 0, () => (Game.Instance.IsInGame && targetmanager.IronBark_use_check),
+               () => Restoration.Ironbark.IsUsable, targetmanager.Gettarget)
+            {
+                FacingRequired = false,
+                IsTerrainClick = false,
+                CancelCast = false,
+                CancelChannel = false,
+            };
             //BattlePreparing Spell list
             targetmanager.BattlePreparing.Add(Rejuvenation);
 
             //LeveL1_Healing Spell list
+            
             targetmanager.LeveL1_Healting.Add(Swiftmend);
             targetmanager.LeveL1_Healting.Add(Wildgrowth);
             targetmanager.LeveL1_Healting.Add(Lifebloom);
             targetmanager.LeveL1_Healting.Add(Rejuvenation);
             targetmanager.LeveL1_Healting.Add(HealingTouch);
             targetmanager.LeveL1_Healting.Add(Regrowth);
+
+
+            //Control_and_Protec Spell list
+            targetmanager.Control_and_Protect.Add(Barkskin);
+            targetmanager.Control_and_Protect.Add(IronBark);
 
             base.SetUpAbilities();
            
