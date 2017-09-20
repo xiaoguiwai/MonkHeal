@@ -292,16 +292,13 @@ namespace MonkHeal
                 Target = Me;
                 return Control_and_Protect;
             }
-            else if(UpdateBarkskinCheck(lowestHealthFriend))
+             if(UpdateIronBarkCheck(lowestHealthFriend))
             {
                 Target = lowestHealthFriend;
                 return Control_and_Protect;
 
             }
-            else
-            {
-                return Empty; 
-            }
+            return Empty;
             
 
                 

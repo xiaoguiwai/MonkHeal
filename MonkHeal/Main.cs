@@ -187,7 +187,7 @@ namespace MonkHeal
                 CancelCast = false,
                 CancelChannel=false,
             };
-            WowAbility HealingTouch = new WowAbility(Restoration.HealingTouch, 0, () => (Game.Instance.IsInGame && targetmanager.Healingtouch_use_check),
+            WowAbility HealingTouch = new WowAbility(Restoration.HealingTouch, 0, () => (Game.Instance.IsInGame && !Me.IsMoving && targetmanager.Healingtouch_use_check),
                 () => Restoration.HealingTouch.IsUsable, targetmanager.Gettarget)
             {
                 FacingRequired = false,
@@ -195,7 +195,7 @@ namespace MonkHeal
                 CancelCast = false,
                 CancelChannel = false,
             };
-            WowAbility Regrowth = new WowAbility(Restoration.Regrowth, 0, () => (Game.Instance.IsInGame && targetmanager.Regrowth_use_check),
+            WowAbility Regrowth = new WowAbility(Restoration.Regrowth, 0, () => (Game.Instance.IsInGame && !Me.IsMoving && targetmanager.Regrowth_use_check),
                 () => Restoration.Regrowth.IsUsable, targetmanager.Gettarget)
             {
                 FacingRequired = false,
@@ -213,7 +213,7 @@ namespace MonkHeal
                 CancelChannel = false,
             };
 
-            WowAbility Wildgrowth = new WowAbility(Restoration.WildGrowth, 0, () => (Game.Instance.IsInGame && targetmanager.WildGrouth_use_check),
+            WowAbility Wildgrowth = new WowAbility(Restoration.WildGrowth, 0, () => (Game.Instance.IsInGame&&!Me.IsMoving && targetmanager.WildGrouth_use_check),
                 () => Restoration.WildGrowth.IsUsable, targetmanager.Gettarget)
             {
                 FacingRequired = false,
