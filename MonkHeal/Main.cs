@@ -190,7 +190,7 @@ namespace MonkHeal
 
         protected override void SetUpAbilities()
         {
-            WowAbility Rejuvenation = new WowAbility(Restoration.Rejuvenation ,0, () => (Game.Instance.IsInGame&&targetmanager.RejuventurationCheck),
+            WowAbility Rejuvenation = new WowAbility(Restoration.Rejuvenation ,0, () => (Game.Instance.IsInGame&&targetmanager.Rejuvenation_use_check),
                 () => Restoration.Rejuvenation.IsUsable, targetmanager.Gettarget)
             {
                 FacingRequired = false,
@@ -198,7 +198,7 @@ namespace MonkHeal
                 CancelCast = false,
                 CancelChannel=false,
             };
-            WowAbility HealingTouch = new WowAbility(Restoration.HealingTouch, 0, () => (Game.Instance.IsInGame && targetmanager.HealingTouchCheck),
+            WowAbility HealingTouch = new WowAbility(Restoration.HealingTouch, 0, () => (Game.Instance.IsInGame && targetmanager.Healingtouch_use_check),
                 () => Restoration.HealingTouch.IsUsable, targetmanager.Gettarget)
             {
                 FacingRequired = false,
@@ -215,7 +215,7 @@ namespace MonkHeal
                 CancelChannel = false,
             };
 
-            WowAbility Lifebloom = new WowAbility(Restoration.Lifebloom, 0, () => (Game.Instance.IsInGame && targetmanager.CanUse_Lifebloom),
+            WowAbility Lifebloom = new WowAbility(Restoration.Lifebloom, 0, () => (Game.Instance.IsInGame && targetmanager.Lifebloom_use_check),
                 () => Restoration.Lifebloom.IsUsable, targetmanager.Gettarget)
             {
                 FacingRequired = false,
@@ -233,10 +233,20 @@ namespace MonkHeal
                 CancelChannel = false,
             };
 
+            WowAbility Swiftmend = new WowAbility(Restoration.Swiftmend, 0, () => (Game.Instance.IsInGame && targetmanager.SwiftMent_use_check),
+               () => Restoration.Swiftmend.IsUsable, targetmanager.Gettarget)
+            {
+                FacingRequired = false,
+                IsTerrainClick = false,
+                CancelCast = false,
+                CancelChannel = false,
+            };
+
             //BattlePreparing Spell list
             targetmanager.BattlePreparing.Add(Rejuvenation);
 
             //LeveL1_Healing Spell list
+            targetmanager.LeveL1_Healting.Add(Swiftmend);
             targetmanager.LeveL1_Healting.Add(Wildgrowth);
             targetmanager.LeveL1_Healting.Add(Lifebloom);
             targetmanager.LeveL1_Healting.Add(Rejuvenation);

@@ -48,9 +48,9 @@ namespace MonkHeal
         public List<IAbility> HearTheLowestTarget = new List<IAbility>();
 
         public bool CancelChannel = true;
-        public bool RejuventurationCheck = true;
-        public bool HealingTouchCheck = true;
-        public bool CanUse_Lifebloom = true;
+        public bool Rejuvenation_use_check = true;
+        public bool Healingtouch_use_check = true;
+        public bool Lifebloom_use_check = true;
         public bool Regrowth_use_check = true;
         public bool WildGrouth_use_check = true;
         public bool SwiftMent_use_check = true;
@@ -119,9 +119,9 @@ namespace MonkHeal
             
 
             //更新生命绽放使用条件
-            CanUse_Lifebloom = UpdateCanuse_Lifebloom();
-            RejuventurationCheck = true;
-            HealingTouchCheck = true;
+            Lifebloom_use_check = UpdateCanuse_Lifebloom();
+            Rejuvenation_use_check = true;
+            Healingtouch_use_check = true;
             Regrowth_use_check = UpdateRegrowthhealth();
             WildGrouth_use_check = UpdateWildGrowthCheck();
             Target = null;
@@ -225,7 +225,7 @@ namespace MonkHeal
             
 
 
-            Target = friendsAndme.FirstOrDefault(x => x.HealthPercentage < 95 && (RejuvenationCheck_checkthetarget(x) == true || CanUse_Lifebloom == true || x.HealthPercentage<Regrowth_healthcheck));
+            Target = friendsAndme.FirstOrDefault(x => x.HealthPercentage < 95 && (RejuvenationCheck_checkthetarget(x) == true || Lifebloom_use_check == true || x.HealthPercentage<Regrowth_healthcheck));
             if (Target != null)
             {
                 if (Target.HealthPercentage < Regrowth_healthcheck)
@@ -236,9 +236,9 @@ namespace MonkHeal
 
                 if (Target.HealthPercentage < HealingTouch_HeallthCheck && FengRao >= 7)
                 {
-                    HealingTouchCheck = true;
+                    Healingtouch_use_check = true;
                 }
-                else { HealingTouchCheck = false; }
+                else { Healingtouch_use_check = false; }
 
                 return LeveL1_Healting;
             }
@@ -251,25 +251,25 @@ namespace MonkHeal
 
 
 
-        public List<IAbility> Solution_Level1_allmorethan90()
-        {
-            if (CanUse_Lifebloom == true)
-            {
-                Target = lowestHealthFriend;
-                return LeveL1_Healting;
-            } else 
-            {
-                Target = friendsAndme.FirstOrDefault(x => (!x.HasAura(774) || !x.HasAura(155777))&&x.HealthPercentage<90);
-                if (Target != null)
-                {
-                    RejuventurationCheck = true;
-                    return LeveL1_Healting;
-                }
-                return Solution_BattlePreparing();
-            }
+        //public List<IAbility> Solution_Level1_allmorethan90()
+        //{
+        //    if (Lifebloom_use_check == true)
+        //    {
+        //        Target = lowestHealthFriend;
+        //        return LeveL1_Healting;
+        //    } else 
+        //    {
+        //        Target = friendsAndme.FirstOrDefault(x => (!x.HasAura(774) || !x.HasAura(155777))&&x.HealthPercentage<90);
+        //        if (Target != null)
+        //        {
+        //            Rejuvenation_use_check = true;
+        //            return LeveL1_Healting;
+        //        }
+        //        return Solution_BattlePreparing();
+        //    }
             
             
-        }
+        //}
 
 
 
@@ -278,7 +278,7 @@ namespace MonkHeal
             //对目标进行回春术释放修正
             if (Target != null)
             {
-                RejuventurationCheck = RejuvenationCheck_checkthetarget(Target);
+                Rejuvenation_use_check = RejuvenationCheck_checkthetarget(Target);
                 SwiftMent_use_check = UpdateSwiftMend(Target);
             }
             
